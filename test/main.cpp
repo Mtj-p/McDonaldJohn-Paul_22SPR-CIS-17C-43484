@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
         if(num==0){
             name[i]=girlarr[num2]+" "+girlarr[num3]+" "+lastarr[num4];
         }
-        cout<<" name: "<<name[i]<<endl;
+        cout<<" name: "<<name[i]<<"\n";
     }
     return 0;
 }
