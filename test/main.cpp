@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
     myfile1.seekg(0);
     if(myfile1.is_open()){
        while(getline(myfile1,line1)){
+           line1.erase(line1.length()-1);
            boyarr[loop1]=line1;
            loop1++;
         }
@@ -49,6 +50,7 @@ int main(int argc, char** argv) {
         while(myfile2.is_open()){
             while(!myfile2.eof()){
                 getline(myfile2,line2);
+                line2.erase(line2.length()-1);
                 girlarr[loop2]=line2;
                 loop2++;
             }
@@ -61,6 +63,7 @@ int main(int argc, char** argv) {
         while(myfile3.is_open()){
             while(!myfile3.eof()){
                 getline(myfile3,line3);
+                line3.erase(line3.length()-1);
                 lastarr[loop3]=line3;
                 loop3++;
             }
@@ -70,25 +73,30 @@ int main(int argc, char** argv) {
     
     
     
-    string name[1000];
+    string name[514][3];
     int num=0,num2=0,num3=0,num4=0;
     for(int i=0;i<512;i++){
-        cout<<"\t\t\t\t#"<<i;
+        cout<<"#"<<i;
         num=abs(rand()%1000);
-        cout<<" num "<<num;
+        //cout<<" num "<<num;
         num2=(num*53)%999;
         num3=(num*69)%999;
         num4=num%999;        
         num=num%2;
-        cout<<" num "<<num<<" num2 "<<num2<<" num3 "<<num3<<" num4 "<<num4;
+        //cout<<" num "<<num<<" num2 "<<num2<<" num3 "<<num3<<" num4 "<<num4;
         if(num>0){
-            name[i]=boyarr[num2]+" "+boyarr[num3]+" "+lastarr[num4];
+            name[i][1]=boyarr[num2];
+            name[i][2]=boyarr[num3];
+            name[i][3]=lastarr[num4];
         }
         if(num==0){
-            name[i]=girlarr[num2]+" "+girlarr[num3]+" "+lastarr[num4];
+            name[i][1]=girlarr[num2];
+            name[i][2]=girlarr[num3];
+            name[i][3]=lastarr[num4];
         }
-        cout<<" name: "<<name[i]<<"\n";
+        cout<<" name: "<<name[i][1]<<" "<<name[i][2]<<" "<<name[i][3]<<"\n";
     }
+    
     return 0;
 }
 
