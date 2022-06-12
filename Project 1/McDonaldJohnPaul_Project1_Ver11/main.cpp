@@ -396,6 +396,8 @@ void stackdeck(stack<int> &deck){
     for(int i=0;i<52;i++){
         f[i]=i+1;
     }
+    int result=search(f[0],f[51],7);
+    cout<<"Result "<<result<<endl;
     shuffle_array(f,52);
     for(int i=0;i<52;i++){
         deck.push(f[i]);
@@ -409,7 +411,7 @@ Hand *dealfive(stack<int> &n){
     n.pop();
     newhand->nxtCard=NULL;
     Hand *temp=newhand;
-    for(int i=1;i<5;i++){
+    for(int i=5;i>1;i--){
         Hand *nxtHand=new Hand;
         nxtHand->card=n.top();
         n.pop();
@@ -425,7 +427,7 @@ Hand *rigged(){
     newhand->card=1;
     newhand->nxtCard=NULL;
     Hand *temp=newhand;
-    for(int i=1;i<5;i++){
+    for(int i=0;i<5;++i){
         Hand *nxtHand=new Hand;
         nxtHand->card=i*13;
         temp->nxtCard=nxtHand;
