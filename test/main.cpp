@@ -21,107 +21,86 @@ string HashFunc(string);
 int main(int argc, char** argv) {
     srand(time(0));
     
-    ifstream myfile1;
-    myfile1.open("boyname.txt", ios::in);
+    ifstream boy;
+    boy.open("boyname.txt", ios::in);
     
     string girlarr[1000];
     string lastarr[1000];
     string boyarr[1000];
-    string line1;
-    string line2;
-    string line3;
-    int loop1=0;
-    int loop2=0;
-    int loop3=0;
-    myfile1.clear();
-    myfile1.seekg(0);
-    if(myfile1.is_open()){
-       while(getline(myfile1,line1)){
-           line1.erase(line1.length()-1);
-           boyarr[loop1]=line1;
-           loop1++;
+    string line;
+
+    int loop1=0,loop2=0,loop3=0;
+    if(boy.is_open()){
+       while(!boy.eof()){
+            getline(boy,line);
+            line.erase(line.length()-1);
+            boyarr[loop1]=line; 
+            loop1++;
         }
     }
-    myfile1.close();
-    ifstream myfile2;
-    myfile2.open("girlname.txt", ios::in);
+    boy.close();
+    ifstream girl;
+    girl.open("girlname.txt", ios::in);
     
-    if(myfile2.is_open()){
-        while(myfile2.is_open()){
-            while(!myfile2.eof()){
-                getline(myfile2,line2);
-                line2.erase(line2.length()-1);
-                girlarr[loop2]=line2;
+    if(girl.is_open()){
+        while(girl.is_open()){
+            while(!girl.eof()){
+                getline(girl,line);
+                line.erase(line.length()-1);
+                girlarr[loop2]=line;
                 loop2++;
             }
-            myfile2.close();
+            girl.close();
         }
     }
-    ifstream myfile3;
-    myfile3.open("lastname.txt", ios::in);
-    if(myfile3.is_open()){
-        while(myfile3.is_open()){
-            while(!myfile3.eof()){
-                getline(myfile3,line3);
-                line3.erase(line3.length()-1);
-                lastarr[loop3]=line3;
+    ifstream last;
+    last.open("lastname.txt", ios::in);
+    if(last.is_open()){
+        while(last.is_open()){
+            while(!last.eof()){
+                getline(last,line);
+                line.erase(line.length()-1);
+                lastarr[loop3]=line;
                 loop3++;
             }
-            myfile3.close();
+            last.close();
         }
     }
     
     
     
-    string name[514][3];
-    int num=0,num2=0,num3=0,num4=0;
+    array<string, 512> name;
     for(int i=0;i<512;i++){
-        cout<<"#"<<i;
-        num=abs(rand()%1000);
-        //cout<<" num "<<num;
-        num2=(num*53)%999;
-        num3=(num*69)%999;
-        num4=num%999;        
-        num=num%2;
-        //cout<<" num "<<num<<" num2 "<<num2<<" num3 "<<num3<<" num4 "<<num4;
-        if(num>0){
-            name[i][1]=boyarr[num2];
-            name[i][2]=boyarr[num3];
-            name[i][3]=lastarr[num4];
+        //cout<<"#"<<i;
+        int num=abs(rand()%1000);
+        if((num%2)>0){
+            name[i]=boyarr[(num*53)%999]+" "+boyarr[(num*69)%999]+" "+lastarr[num%999];
         }
-        if(num==0){
-            name[i][1]=girlarr[num2];
-            name[i][2]=girlarr[num3];
-            name[i][3]=lastarr[num4];
+        if((num%2)==0){
+            name[i]=girlarr[(num*53)%999]+" "+girlarr[(num*69)%999]+" "+lastarr[num%999];
         }
-        cout<<" name: "<<name[i][1]<<" "<<name[i][2]<<" "<<name[i][3]<<"\n";
+        //cout<<" name: "<<name[i]<<"\n";
+    }
+    array<string, 512> hashresults;
+    for(int i=0;i<512;i++){
+        hashresults[i]=HashFunc(name[i]);
+        cout<<hashresults[i]<<endl;
     }
     
     return 0;
 }
 
-
-
-
-
-
-
-
-
-
 string HashFunc(string key){
-        string temp = key;
-        string hashkey;
-        while(temp.length()>0){
-            cout<<"Hash key "<<hashkey<<"\tHashkey.length()"<<hashkey.length();
-            cout<<"\ttemp "<<temp<<endl;
-            if(temp.front()==' '){
-                temp.erase(0,1);
-            }
-            hashkey.push_back(temp.front());
-            do{
-                temp.erase(0,1);
-            }while(temp.front()!=' '&&temp.length()>0);
+    string temp = key;
+    string hashkey;
+    while(temp.length()>0){
+        if(temp.front()==' '){
+            temp.erase(0,1);
         }
-        return hashkey;
+        hashkey.push_back(temp.front());
+        do{
+            temp.erase(0,1);
+        }while(temp.front()!=' '&&temp.length()>0);
     }
+    return hashkey;
+}

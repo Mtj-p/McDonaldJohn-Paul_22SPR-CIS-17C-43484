@@ -1,8 +1,11 @@
 /*
  * file: McDonaldJohnPaul_Final_CSC-17C_Problem5_BinaryTrees
  * Author: John-Paul McDonald
- * Date: 
+ * Date: 06/12/2022
  * Purpose: 
+ * Take problem 1 and put each of the 3 letters in a sorted binary tree. Compare number of
+ * nodes to identify a match with the hash vs. the tree. Use the AVL technique to balance
+ * the tree.
  */
 
 //System Libraries
