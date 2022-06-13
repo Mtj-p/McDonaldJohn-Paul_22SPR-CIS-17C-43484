@@ -1,6 +1,6 @@
 Red
 Violet
 Green
-Orange 
+Orange
 Black
 White

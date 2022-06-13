@@ -28,6 +28,13 @@ int HashFunc(string);
 string *getColors(string);
 string *makeColors(string *);
 string Initials(string);
+void RuleSet();
+bool StartMenu(queue<int>&);
+void GoodBye();
+void GameMechanics(queue<int>&);
+bool checkans(string,int);
+string ReverseHash(int);
+
 
 class DLL{
     struct node{
@@ -194,9 +201,8 @@ public:
             i=i->next;
         }
     }
-    
-    
-};
+    }
+;
 
 struct avl{
 	string d;
@@ -243,7 +249,7 @@ avl *avl_tree::rr_rotat(avl *parent) {
    t = parent->r;
    parent->r = t->l;
    t->l = parent;
-   cout<<"Right-Right Rotation";
+   //cout<<"Right-Right Rotation";
    return t;
 }
 avl *avl_tree::ll_rotat(avl *parent) {
@@ -251,21 +257,21 @@ avl *avl_tree::ll_rotat(avl *parent) {
    t = parent->l;
    parent->l = t->r;
    t->r = parent;
-   cout<<"Left-Left Rotation";
+   //cout<<"Left-Left Rotation";
    return t;
 }
 avl *avl_tree::lr_rotat(avl *parent) {
    avl *t;
    t = parent->l;
    parent->l = rr_rotat(t);
-   cout<<"Left-Right Rotation";
+   //cout<<"Left-Right Rotation";
    return ll_rotat(parent);
 }
 avl *avl_tree::rl_rotat(avl *parent) {
    avl *t;
    t = parent->r;
    parent->r = ll_rotat(t);
-   cout<<"Right-Left Rotation";
+   //cout<<"Right-Left Rotation";
    return rr_rotat(parent);
 }
 avl *avl_tree::balance(avl *t) {
@@ -306,11 +312,10 @@ void avl_tree::show(avl *p, int l) {
    int i;
    if (p != NULL) {
       show(p->r, l+ 1);
-      cout<<" ";
+      
       if (p == r)
-         cout << "Root -> ";
+         
       for (i = 0; i < l&& p != r; i++)
-         cout << " ";
          cout << p->d;
          show(p->l, l + 1);
    }
@@ -319,7 +324,7 @@ void avl_tree::inorder(avl *t) {
    if (t == NULL)
       return;
       inorder(t->l);
-      cout << t->d << " ";
+      cout << t->d;
       inorder(t->r);
 }
 void avl_tree::preorder(avl *t) {
@@ -379,14 +384,14 @@ int main() {
         solutionset.push(HashFunc(solution[i]));
     }    
     
-    DLL hashing;
-    int counter=0;
-    while(solutionset.size()>0){
-        hashing.insertBeg(solutionset.front(),solution[counter]);
-        solutionset.pop();
-        counter++;
+    RuleSet();
+    bool game = true;
+    while(game){
+        game=StartMenu(solutionset);
     }
-    hashing.forward_traversenames();
+    GoodBye();
+    
+    
     /*   
     
     avl_tree avl;
@@ -441,6 +446,101 @@ int main() {
     return 0;
 }
 
+void RuleSet(){
+    cout<<"Welcome to Mastermind. The colors available are:\n"
+            "'R' for Red\n"
+            "'V' for Violet\n"
+            "'G' for Green\n"
+            "'O' for Orange\n"
+            "'B' for Black\n"
+            "'W' for White\n";
+    cout<<"In terms of user input, please enter your guess as a string of characters correseponding\n"
+            "to the individual characters associated with the color(s) you wish to guess, in order from\n"
+            "left to right.\n";
+    cout<<"In terms of feedback:\n"
+            "a ? will denote an incorrect color.\n"
+            "a ! will denote a correct color in the wrong place.\n"
+            "and an @ will denote a correct color in the correct place.\n";
+    cout<<"You will have 10 opportunities to guess a color combination.\n\n\n";
+}
+
+void GoodBye(){
+    cout<<"\nGoodbye.\n";
+}
+
+bool StartMenu(queue<int> &deck){
+    
+    cout<<"Would you like to play a game? [y] [n] ";
+    char x;
+    cin>>x;
+    if(x=='y'){
+        GameMechanics(deck);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void GameMechanics(queue<int> &deck){
+    bool gameactive=true;
+    bool playerwin = false;
+    int solu = deck.front();
+    string playerguess;
+    deck.pop();
+    while(gameactive){
+        playerguess = "BGBG";
+        cout<<"playerguess "<<playerguess<<" solu "<<solu<<endl;
+        playerwin=checkans(playerguess,solu);
+        break;
+    }
+}
+
+bool checkans(string playerguess,int solution){
+    bool playerwin=true;
+    int temp = HashFunc(playerguess);
+    if(temp==solution){
+        playerwin=true;
+        return playerwin;
+    }
+    string solut = ReverseHash(solution);
+    cout<<"solut "<<solut<<endl;
+    string at="@";
+    string ex="!";
+    string qu="?";
+    avl_tree out;
+    int count = 0;
+    for(int i = 0;i<4;i++){
+        if(playerguess[i]==solut[i]){
+            r = out.insert(r,at);
+            count++;
+            playerguess.replace(i,1,"0");
+            solut.replace(i,1,"1");
+        }
+    }
+    for(int i=0;i<solut.size();i++){
+        for(int j=0;j<playerguess.size();j++){
+            if(playerguess[j]==solut[i]){
+                r = out.insert(r,ex);
+                count++;
+                
+                playerguess.replace(j,1,"0");
+                solut.replace(i,1,"1");
+                cout<<"equals not eq but close "<<endl;
+            }
+        }
+    }
+    for(int i=0;i<(4-count);i++){
+        r = out.insert(r,"?");
+        cout<<"well that's not it at all "<<endl;
+    }
+    cout<<"testing? "<<endl;
+    out.balance(r);
+    out.inorder(r);
+    cout<<"testing? \\"<<endl;
+    return playerwin;
+}
+
 string *getColors(string filename){
     ifstream myfile;
     myfile.open(filename, ios::in);
@@ -450,6 +550,7 @@ string *getColors(string filename){
     if(myfile.is_open()){
        while(!myfile.eof()){
             getline(myfile,line);
+            line.pop_back();
             temp[loop]=line; 
             loop++;
         }
@@ -461,8 +562,8 @@ string *makeColors(string *color){
     string *name = new string [512];
     for(int i=0;i<512;i++){
         int num=abs(rand()%100);
-        name[i]+=color[(num*4)%6]+" "+color[(num*i)%6]+" "+color[((num*17)+4)%6]+" "
-                +color[((num*3)+7)%6]+" "+color[(num*4*i)%6]+" "+color[((num*29)+14)%6];
+        name[i]=color[(num*4)%6]+" "+color[(num*i)%6]+" "+color[((num*17)+4)%6]+" "
+                +color[((num*3)+7)%6];
     }
     return name;
 }
@@ -486,6 +587,7 @@ int HashFunc(string x){
     int results=0;
     int pf = 0;
     string abrev=Initials(x);
+    //cout<<"abrev: "<<abrev<<" string "<<x<<endl;
     char current;
     while(abrev.length()>0){
         current=abrev[0];
@@ -523,8 +625,57 @@ int HashFunc(string x){
         }
         abrev.erase(0,1);
     }
-    while(results>999999){
+    while(results>9999){
         results=results/10;
     }
     return results;
+}
+
+string ReverseHash(int input){
+    string reverse;
+    int temp=0;
+    temp = input/(1000);
+        switch(temp){
+           case 2: reverse.push_back('B');break;
+           case 4: reverse.push_back('G');break;
+           case 6: reverse.push_back('O');break;
+           case 7: reverse.push_back('R');break;
+           case 8: reverse.push_back('V');break;
+           case 9: reverse.push_back('W');break;
+           default: break;
+        }
+    input = input%(1000);
+    temp = input/100;
+        switch(temp){
+           case 2: reverse.push_back('B');break;
+           case 4: reverse.push_back('G');break;
+           case 6: reverse.push_back('O');break;
+           case 7: reverse.push_back('R');break;
+           case 8: reverse.push_back('V');break;
+           case 9: reverse.push_back('W');break;
+           default: break;
+        }  
+    input = input%(100);
+    temp = input/10;
+        switch(temp){
+           case 2: reverse.push_back('B');break;
+           case 4: reverse.push_back('G');break;
+           case 6: reverse.push_back('O');break;
+           case 7: reverse.push_back('R');break;
+           case 8: reverse.push_back('V');break;
+           case 9: reverse.push_back('W');break;
+           default: break;
+        }  
+    temp = input%10;
+        switch(temp){
+           case 2: reverse.push_back('B');break;
+           case 4: reverse.push_back('G');break;
+           case 6: reverse.push_back('O');break;
+           case 7: reverse.push_back('R');break;
+           case 8: reverse.push_back('V');break;
+           case 9: reverse.push_back('W');break;
+           default: break;
+        }  
+    return reverse;
+    
 }
