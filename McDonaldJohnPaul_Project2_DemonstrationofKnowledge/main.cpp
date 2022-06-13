@@ -26,6 +26,7 @@
 
 using namespace std;
 
+
 int HashFunc(string);
 string *getColors(string);
 string *makeColors(string *);
@@ -46,6 +47,7 @@ class DLL{
         node* prev;
     };
     node *begin=NULL, *end=NULL;
+    
 public:
     int find(int &a){
         bool out=false;
@@ -64,6 +66,8 @@ public:
             ptr=ptr->next;
         }
     }
+    
+    
     void forward_traverseabrevs(){
         if(begin==NULL){
             cout<<"Empty ..."<<endl;
@@ -115,6 +119,7 @@ public:
         }
     }
     
+    
     void forward_traversenames(){
         if(begin==NULL){
             cout<<"Empty ..."<<endl;
@@ -138,6 +143,7 @@ public:
         }
     }
     
+    
     void backwards_traverse(){
         if(end==NULL){
             cout<<"Empty ..."<<endl;
@@ -151,6 +157,7 @@ public:
             }
         }
     }
+    
     
     void insertBeg(int x,string z){
         node *tmp = new node;
@@ -167,6 +174,7 @@ public:
         begin=tmp;
     }
     
+    
     void insertEnd(int x,string z){
         node *tmp = new node;
         tmp->hash=x;
@@ -182,6 +190,7 @@ public:
         }
         end=tmp;
     }
+    
     
     void sortlist(){
         node *i=begin, *j=NULL;
@@ -211,6 +220,8 @@ struct avl{
 	struct avl *l;
 	struct avl *r;
 }*r;
+
+
 class avl_tree{
 	public:
 		int height(avl *);
@@ -230,6 +241,8 @@ class avl_tree{
 			r = NULL;
 		}
 };
+
+
 int avl_tree::height(avl *t){
 	int h=0;
 	if(t!=NULL){
@@ -240,12 +253,16 @@ int avl_tree::height(avl *t){
 	}
 	return h;
 }
+
+
 int avl_tree::difference(avl *t) {
    int l_height = height(t->l);
    int r_height = height(t->r);
    int b_factor = l_height - r_height;
    return b_factor;
 }
+
+
 avl *avl_tree::rr_rotat(avl *parent) {
    avl *t;
    t = parent->r;
@@ -254,6 +271,8 @@ avl *avl_tree::rr_rotat(avl *parent) {
    //cout<<"Right-Right Rotation";
    return t;
 }
+
+
 avl *avl_tree::ll_rotat(avl *parent) {
    avl *t;
    t = parent->l;
@@ -262,6 +281,8 @@ avl *avl_tree::ll_rotat(avl *parent) {
    //cout<<"Left-Left Rotation";
    return t;
 }
+
+
 avl *avl_tree::lr_rotat(avl *parent) {
    avl *t;
    t = parent->l;
@@ -269,6 +290,8 @@ avl *avl_tree::lr_rotat(avl *parent) {
    //cout<<"Left-Right Rotation";
    return ll_rotat(parent);
 }
+
+
 avl *avl_tree::rl_rotat(avl *parent) {
    avl *t;
    t = parent->r;
@@ -276,6 +299,8 @@ avl *avl_tree::rl_rotat(avl *parent) {
    //cout<<"Right-Left Rotation";
    return rr_rotat(parent);
 }
+
+
 avl *avl_tree::balance(avl *t) {
    int bal_factor = difference(t);
    if (bal_factor > 1) {
@@ -291,6 +316,8 @@ avl *avl_tree::balance(avl *t) {
    }
    return t;
 }
+
+
 avl *avl_tree::insert(avl *r, string v) {
     
     
@@ -310,6 +337,8 @@ avl *avl_tree::insert(avl *r, string v) {
       r = balance(r);
    } return r;
 }
+
+
 void avl_tree::show(avl *p, int l) {
    int i;
    if (p != NULL) {
@@ -322,6 +351,8 @@ void avl_tree::show(avl *p, int l) {
          show(p->l, l + 1);
    }
 }
+
+
 void avl_tree::inorder(avl *t) {
    if (t == NULL)
       return;
@@ -329,6 +360,8 @@ void avl_tree::inorder(avl *t) {
       cout << t->d;
       inorder(t->r);
 }
+
+
 void avl_tree::preorder(avl *t) {
    if (t == NULL)
       return;
@@ -336,6 +369,8 @@ void avl_tree::preorder(avl *t) {
       preorder(t->l);
       preorder(t->r);
 }
+
+
 void avl_tree::postorder(avl *t) {
    if (t == NULL)
       return;
@@ -343,6 +378,8 @@ void avl_tree::postorder(avl *t) {
       postorder(t ->r);
       cout << t->d << " ";
 }
+
+
 
 int avl_tree::find1(avl *t, string &a, stack<int> &b, stack<int> &c, bool &leftflag){
     if(t==NULL)
@@ -396,6 +433,8 @@ int main() {
     return 0;
 }
 
+
+
 void RuleSet(){
     cout<<"Welcome to Mastermind. The colors available are:\n"
             "'R' for Red\n"
@@ -404,15 +443,20 @@ void RuleSet(){
             "'O' for Orange\n"
             "'B' for Black\n"
             "'W' for White\n";
+    
     cout<<"In terms of user input, please enter your guess as a string of characters correseponding\n"
             "to the individual characters associated with the color(s) you wish to guess, in order from\n"
             "left to right.\n";
+    
     cout<<"In terms of feedback:\n"
             "a ? will denote an incorrect color.\n"
             "a ! will denote a correct color in the wrong place.\n"
             "and an @ will denote a correct color in the correct place.\n";
+    
     cout<<"You will have 10 opportunities to guess a color combination.\n\n\n";
 }
+
+
 
 void GoodBye(map<int,int>&gameresults){
     int count = 0;
@@ -423,8 +467,23 @@ void GoodBye(map<int,int>&gameresults){
         count++;
     }
     cout<<"Total games played: "<<count<<endl;
+    
+    fstream myfile;
+    myfile.open("results.txt",fstream::out|fstream::app);
+    if(myfile.is_open()){
+        for(itr=gameresults.begin();itr!=gameresults.end();++itr){
+            myfile<<"Game #"<<itr->first<<" Score:\t"<<itr->second<<'\n';
+        }
+        myfile<<"Total games played: "<<count<<'\n';
+    }else{
+        cout<<"myfile did not open. \n";
+    }
+    myfile.close();
+    
     cout<<"\nGoodbye.\n";
 }
+
+
 
 bool StartMenu(queue<int> &deck,map<int, int> &gameresults){
     bool gameactive=true;
@@ -443,6 +502,8 @@ bool StartMenu(queue<int> &deck,map<int, int> &gameresults){
         }
     }
 }
+
+
 
 bool GameMechanics(queue<int> &deck,map<int,int> &gameresults){
     bool gameactive=true;
@@ -497,6 +558,8 @@ bool GameMechanics(queue<int> &deck,map<int,int> &gameresults){
     return gameactive;
 }
 
+
+
 bool checkans(string playerguess,int solution){
     bool playerwin=false;
     int temp = HashFunc(playerguess);
@@ -505,7 +568,7 @@ bool checkans(string playerguess,int solution){
         playerwin=true;
         return playerwin;
     }
-    cout<<"\nsolution: "<<solut<<" ";
+    //cout<<"\nsolution: "<<solut<<" ";
     //cout<<"solut "<<solut<<endl;
     string at="@";
     string ex="!";
@@ -529,7 +592,7 @@ bool checkans(string playerguess,int solution){
                 
                 playerguess.replace(j,1,"0");
                 solut.replace(i,1,"1");
-                //cout<<"equals not eq but close "<<endl;
+                //cout<<"not eq but close "<<endl;
             }
         }
     }
@@ -542,6 +605,8 @@ bool checkans(string playerguess,int solution){
     cout<<endl;
     return playerwin;
 }
+
+
 
 string *getColors(string filename){
     ifstream myfile;
@@ -560,6 +625,8 @@ string *getColors(string filename){
     return temp;
 }
 
+
+
 string *makeColors(string *color){
     string *name = new string [512];
     for(int i=0;i<512;i++){
@@ -569,6 +636,8 @@ string *makeColors(string *color){
     }
     return name;
 }
+
+
 
 string Initials(string key){
     string temp = key;
@@ -584,6 +653,8 @@ string Initials(string key){
     }
     return hashkey;
 }
+
+
 
 int HashFunc(string x){
     int results=0;
@@ -679,5 +750,4 @@ string ReverseHash(int input){
            default: break;
         }  
     return reverse;
-    
 }
