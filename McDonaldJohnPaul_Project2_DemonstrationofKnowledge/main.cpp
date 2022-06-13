@@ -20,6 +20,8 @@
 #include <cmath>
 #include <vector>
 #include <stack>
+#include <map>
+#include <iterator>
 
 
 using namespace std;
@@ -29,9 +31,9 @@ string *getColors(string);
 string *makeColors(string *);
 string Initials(string);
 void RuleSet();
-bool StartMenu(queue<int>&);
-void GoodBye();
-void GameMechanics(queue<int>&);
+bool StartMenu(queue<int>&,map<int,int>&);
+void GoodBye(map<int,int>&);
+bool GameMechanics(queue<int>&,map<int,int>&);
 bool checkans(string,int);
 string ReverseHash(int);
 
@@ -372,7 +374,7 @@ int avl_tree::find1(avl *t, string &a, stack<int> &b, stack<int> &c, bool &leftf
 int main() {
     
     srand(time(0));
-    
+    map<int, int> gameresults;
     string colorfile = "colors.txt";
     string * pallette;
     pallette=getColors(colorfile);
@@ -387,62 +389,10 @@ int main() {
     RuleSet();
     bool game = true;
     while(game){
-        game=StartMenu(solutionset);
+        game=StartMenu(solutionset,gameresults);
     }
-    GoodBye();
+    GoodBye(gameresults);
     
-    
-    /*   
-    
-    avl_tree avl;
-    for(int i=0;i<512;i++){
-        r = avl.insert(r,Initials(names[i]));
-    }
-   
-    if (r == NULL) {
-        cout<<"Tree is Empty"<<endl;
-    }
-    cout<<"Balanced AVL Tree:"<<endl;
-    avl.show(r, 1);
-    cout<<endl;
-    
-    cout << "Inorder Traversal:"<<endl;
-    avl.inorder(r);
-    cout << endl;
-    cout<<"Preorder Traversal:"<<endl;
-    avl.preorder(r);
-    cout<<endl;     
-    cout <<"Postorder Traversal:"<<endl;
-    avl.postorder(r);
-    cout<<endl;      
-    
-    
-    DLL hashing;
-    int hash;
-    string temp;
-    for(int i=0;i<512;i++){
-        temp=names[i];
-        hash=HashFunc(temp);
-        hashing.insertBeg(hash,temp);
-    }
-    hashing.sortlist();
-    int iterations = 100;
-    int avlarr[iterations];
-    int hasharr[iterations];
-    cout<<endl<<endl;
-    for(int i=0;i<iterations;i++){
-        string finding=names[rand()%511];
-        string finders = Initials(finding);
-        string testing=finders;
-        stack<int> keepersleft;
-        stack<int> keepersright;
-        bool left = true;
-        int finds = HashFunc(finding);
-        avlarr[i]=avl.find1(r,finders,keepersleft,keepersright,left);
-        hasharr[i]=hashing.find(finds);
-        cout<<endl;
-    }
-     */
     return 0;
 }
 
@@ -464,52 +414,105 @@ void RuleSet(){
     cout<<"You will have 10 opportunities to guess a color combination.\n\n\n";
 }
 
-void GoodBye(){
+void GoodBye(map<int,int>&gameresults){
+    int count = 0;
+    cout<<"\n\nThanks for playing!\n\n";
+    map<int, int>::iterator itr;
+    for(itr = gameresults.begin(); itr!= gameresults.end(); ++itr){
+        cout<<"Game #"<<itr->first<<" Score:\t"<<itr->second<<'\n';
+        count++;
+    }
+    cout<<"Total games played: "<<count<<endl;
     cout<<"\nGoodbye.\n";
 }
 
-bool StartMenu(queue<int> &deck){
+bool StartMenu(queue<int> &deck,map<int, int> &gameresults){
+    bool gameactive=true;
     
-    cout<<"Would you like to play a game? [y] [n] ";
-    char x;
-    cin>>x;
-    if(x=='y'){
-        GameMechanics(deck);
-        return true;
-    }
-    else{
-        return false;
+    while(gameactive){
+        cout<<"\n\nWould you like to play a game? [y] [n] ";
+        char x;
+        cin.clear();
+        cin>>x;
+        if(x=='y'){
+            gameactive=GameMechanics(deck,gameresults);
+            return gameactive;
+        }
+        else{
+            return false;
+        }
     }
 }
 
-void GameMechanics(queue<int> &deck){
+bool GameMechanics(queue<int> &deck,map<int,int> &gameresults){
     bool gameactive=true;
     bool playerwin = false;
     int solu = deck.front();
     string playerguess;
+    char x;
     deck.pop();
+    int count = 0;
+    
+    int gamecounter=1;
     while(gameactive){
-        playerguess = "BGBG";
-        cout<<"playerguess "<<playerguess<<" solu "<<solu<<endl;
-        playerwin=checkans(playerguess,solu);
-        break;
+        if(count<=10){
+            count++;
+            cout<<"# "<<count<<" Your guess: ";
+            cin.clear();
+            cin>>playerguess;
+            for(int i=0;i<4;i++){
+                if(playerguess[i]<'z'&&playerguess[i]>='a'){
+                    playerguess[i]+=(-32);
+            }
     }
+            playerwin=checkans(playerguess,solu);
+        }
+        if(playerwin==true){
+            cout<<"\n\n~~You win!~~\n\n";
+            cout<<"Would you like to play again? [y][n] ";
+            cin>>x;
+            if(x=='n'){
+                gameactive=false;
+            }
+            solu=deck.front();
+            deck.pop();
+            gameresults.insert(pair<int, int>(gamecounter,count));
+            count = 0;
+            gamecounter++;
+        }
+        if(count>10){
+            gameresults.insert(pair<int, int>(gamecounter,count));
+            count=0;
+            gamecounter++;
+            cout<<"\n\nYou bust!\n\n";
+            cout<<"Would you like to play again? [y][n] ";
+            cin>>x;
+            if(x=='n'){
+                gameactive=false;
+            }
+            solu=deck.front();
+            deck.pop();
+        }
+    }
+    return gameactive;
 }
 
 bool checkans(string playerguess,int solution){
-    bool playerwin=true;
+    bool playerwin=false;
     int temp = HashFunc(playerguess);
-    if(temp==solution){
+    string solut = ReverseHash(solution);
+    if(playerguess==solut){
         playerwin=true;
         return playerwin;
     }
-    string solut = ReverseHash(solution);
-    cout<<"solut "<<solut<<endl;
+    cout<<"\nsolution: "<<solut<<" ";
+    //cout<<"solut "<<solut<<endl;
     string at="@";
     string ex="!";
     string qu="?";
     avl_tree out;
     int count = 0;
+    cout<<"Player guess "<<playerguess<<endl;
     for(int i = 0;i<4;i++){
         if(playerguess[i]==solut[i]){
             r = out.insert(r,at);
@@ -526,18 +529,17 @@ bool checkans(string playerguess,int solution){
                 
                 playerguess.replace(j,1,"0");
                 solut.replace(i,1,"1");
-                cout<<"equals not eq but close "<<endl;
+                //cout<<"equals not eq but close "<<endl;
             }
         }
     }
     for(int i=0;i<(4-count);i++){
         r = out.insert(r,"?");
-        cout<<"well that's not it at all "<<endl;
+        //cout<<"well that's not it at all "<<endl;
     }
-    cout<<"testing? "<<endl;
     out.balance(r);
     out.inorder(r);
-    cout<<"testing? \\"<<endl;
+    cout<<endl;
     return playerwin;
 }
 
